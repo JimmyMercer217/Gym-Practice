@@ -8,3 +8,5 @@ OenAi-Gym环境熟悉与RL学习练习
 | Taxi        |  | Q-Learning |  ✔ |
 | Taxi        |  |       MAXQ |   |
 | FlappyBird  |  |        DQN |  ✔ |
+| CartPole  |  |        Double-DQN |  ✔ |
+| CartPole  |  |        DQN |  ✔ |
