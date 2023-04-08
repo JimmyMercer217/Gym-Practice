@@ -36,8 +36,8 @@ $$
 $$
 \begin{aligned}
 V_{π}(s)&=\mathbb{E}_{π}[G_t|S_t=s] \\
-& = \mathbb{E}_{π}[R_{t+1}+\gamma R_{t+2}+\gamma^2 R_{t+2}…|S_t=s] \\
-& = \mathbb{E}_{π}[R_{t+1}+\gamma (R_{t+2}+\gamma R_{t+2}…)|S_t=s] \\
+& = \mathbb{E}_{π}[R_{t+1}+\gamma R_{t+2}+\gamma^2 R_{t+3}…|S_t=s] \\
+& = \mathbb{E}_{π}[R_{t+1}+\gamma (R_{t+2}+\gamma R_{t+3}…)|S_t=s] \\
 & = \mathbb{E}_{π}[R_{t+1}+\gamma G_{t+1}|S_t=s]
 \end{aligned} \tag{2}
 $$
@@ -102,7 +102,7 @@ $$
 
 $$
 \begin{aligned}
-Q_{\pi}(s, a) =\sum_{s^{\prime},r} p\left(s^{\prime} \mid s, a\right)\left[r+\gamma \sum_{a'} \pi(a' \mid s')Q_{\pi}(s', a'))\right]
+Q_{\pi}(s, a) =\sum_{s^{\prime},r} p\left(s^{\prime},r \mid s, a\right)\left[r+\gamma \sum_{a'} \pi(a' \mid s')Q_{\pi}(s', a'))\right]
 \end{aligned} \tag{7}
 $$
 
