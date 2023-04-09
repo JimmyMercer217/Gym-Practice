@@ -10,8 +10,7 @@ OpenAi-Gym环境熟悉与RL学习练习
 | CartPole    |  |  Double-DQN |  ✔ |
 | CartPole    |  |         DQN |  ✔ |
 | LunarLander | default |  Double-DQN |  ✔ |
-| LunarLander |  | Dueling-DQN |   |
-| LunarLander |  | D3QN |   |
+| LunarLander | default | D3QN | ✔ |
 
 ## 贝尔曼方程
 
