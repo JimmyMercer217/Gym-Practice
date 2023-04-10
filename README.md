@@ -1,4 +1,5 @@
 # Gym-Practice
+
 OpenAi-Gym环境熟悉与RL学习练习
 
 | Environment |      Parameters      |   Algorithm |  Status |
@@ -14,15 +15,14 @@ OpenAi-Gym环境熟悉与RL学习练习
 
 ## 贝尔曼方程
 
-$A$：动作集合  
-$S$：状态集合  
-$π(a|s) = P(a|s)$：表示在状态 $s$采取 $a$的概率，也称策略。  
-$P(s'|s)$：在状态 $s$下状态转移到 $s'$的概率。  
-$P(s'|a,s)$：在状态 $s$下采取动作 $a$后状态转移到 $s'$的概率。  
-$P(s',r|a,s)$：在状态 $s$下采取动作 $a$后状态转移到 $s'$并且获得奖励 $r$的概率。  
+$A$：动作集合
+$S$：状态集合
+$π(a|s) = P(a|s)$：表示在状态 $s$采取 $a$的概率，也称策略。
+$P(s'|s)$：在状态 $s$下状态转移到 $s'$的概率。
+$P(s'|a,s)$：在状态 $s$下采取动作 $a$后状态转移到 $s'$的概率。
+$P(s',r|a,s)$：在状态 $s$下采取动作 $a$后状态转移到 $s'$并且获得奖励 $r$的概率。
 
-
-定义累计回报为  
+定义累计回报为
 
 $$
 G_t=R_{t+1}+\gamma R_{t+2}+…=\sum_{k=0}^{∞} \gamma^k R_{t+k+1} \tag{1}
@@ -113,10 +113,34 @@ Q_{\pi}(s, a) =r+\gamma \sum_{a'} \pi(a' \mid s')Q_{\pi}(s', a'))
 \end{aligned} \tag{8}
 $$
 
-## Q-Learning&DQN
+## Q-Learning
+
+&emsp;&emsp;在强化学习中value-based方法要在当前状态 $s$下选择对应 $Q$值最大的action当作策略，因此对于每个状态下的动作 $a$对应的 $Q$值评估十分重要。其中，非常直觉的是，**Q-learning和DQN通过使得在确定状态 $s$下的动作 $a$的 $Q_{\pi}(s, a)$最大来评估动作$a$好坏。** 以退化公式 $(7)$为例，则估计为
+
+$$
+\begin{aligned}
+Q^{*}_{\pi}(s, a) =r+\gamma \max Q_{\pi}(s', a')
+\end{aligned} \tag{9}
+$$
+
+其中通过引入学习率 $\alpha$来实现当前 $Q$值与最佳 $Q^*$的结合，从而得到如下公式：
+
+$$
+\begin{aligned}
+Q_{\pi}(s, a) =  Q_{\pi}(s, a)+ \alpha[ r+\gamma \max Q_{\pi}(s', a')-Q_{\pi}(s, a)]
+\end{aligned} \tag{10}
+$$
+
+&emsp; &emsp; 如上所述，网上大部分资料对于 $\alpha$的理解仅停留在对于当前 $Q$值与最佳 $Q^*$的结合。**但是事实上，当我们的环境中对于状态转移以及获取到的reward都唯一确定的时候， $\alpha != 1$只会引起收敛速度的减缓，只有当环境中存在stochastic才需要引入 $\alpha$来使得 $Q$能够收敛，且一般情况下 $Q$值较小。**
+
+&emsp; &emsp; 引用wiki上的一句话就是'In fully deterministic environments, a learning rate of $\alpha_t=1$  is optimal. When the problem is stochastic, the algorithm converges under some technical conditions on the learning rate that require it to decrease to zero.'
+
+&emsp;&emsp;此外，可以通过frozenLake中 is_slippery=False，使用不同的学习率来验证fully deterministic environments下 $\alpha$的作用。在is_slippery=True条件下，分别假定已知状态转移概率来理解使用公式 $(7)$，以及未知状态转移概率验证 $\alpha$在stochastic environments的作用。
+
+## DQN
 
 ## Double DQN
 
 ## Dueling DQN
 
-## D3QN With Prioritized Experience Replay Memory
+
