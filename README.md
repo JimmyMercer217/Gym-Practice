@@ -115,7 +115,7 @@ $$
 
 ## Q-Learning
 
-&emsp;&emsp;在强化学习中value-based方法要在当前状态 $s$下选择对应 $Q$值最大的action当作策略，因此对于每个状态下的动作 $a$对应的 $Q$值评估十分重要。其中，非常直觉的是，**Q-learning和DQN通过使得在确定状态 $s$下的动作 $a$的 $Q_{\pi}(s, a)$最大来评估动作$a$好坏。** 以退化公式 $(7)$为例，则估计为
+&emsp;&emsp;在强化学习中value-based方法要在当前状态 $s$下选择对应 $Q$值最大的action当作策略，因此对于每个状态下的动作 $a$对应的 $Q$值评估十分重要。其中，非常直觉的是，**Q-learning和DQN通过使得在确定状态 $s$下的动作 $a$的 $Q_{\pi}(s, a)$最大来评估动作 $a$好坏。** 以退化公式 $(7)$为例，则估计为
 
 $$
 \begin{aligned}
@@ -131,7 +131,7 @@ Q_{\pi}(s, a) =  Q_{\pi}(s, a)+ \alpha[ r+\gamma \max Q_{\pi}(s', a')-Q_{\pi}(s,
 \end{aligned} \tag{10}
 $$
 
-&emsp; &emsp; 如上所述，网上大部分资料对于 $\alpha$的理解仅停留在对于当前 $Q$值与最佳 $Q^*$的结合。**但是事实上，当我们的环境中对于状态转移以及获取到的reward都唯一确定的时候， $\alpha != 1$只会引起收敛速度的减缓，只有当环境中存在stochastic才需要引入 $\alpha$来使得 $Q$能够收敛，且一般情况下 $\alpha$值较小。**
+&emsp; &emsp; 如上所述，网上大部分资料对于 $\alpha$的理解仅停留在对于当前 $Q$值与最佳 $Q^*$的结合。**但是事实上，当我们的环境中对于状态转移以及获取到的reward都唯一确定的时候， $\alpha != 1$只会引起收敛速度的减缓(指 $Q$表中的值的收敛，不影响策略的收敛，另外其实在完全确定情况下甚至不需要贪婪策略，因为对于状态下的动作都能唯一判断其好坏)，只有当环境中存在stochastic才需要引入 $\alpha$来使得 $Q$值以及策略能够收敛，且一般情况下 $\alpha$值较小。通用起见，可以设计通用 $\alpha$为一个较小值**
 
 &emsp; &emsp; 引用wiki上的一句话就是'In fully deterministic environments, a learning rate of $\alpha_t=1$  is optimal. When the problem is stochastic, the algorithm converges under some technical conditions on the learning rate that require it to decrease to zero.'
 
