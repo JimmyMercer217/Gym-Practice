@@ -34,10 +34,10 @@ $$
 
 $$
 \begin{aligned}
-V_{π}(s)&=\mathbb{E}_{π}[G_t|S_t=s] \\
-& = \mathbb{E}_{π}[R_{t+1}+\gamma R_{t+2}+\gamma^2 R_{t+3}…|S_t=s] \\
-& = \mathbb{E}_{π}[R_{t+1}+\gamma (R_{t+2}+\gamma R_{t+3}…)|S_t=s] \\
-& = \mathbb{E}_{π}[R_{t+1}+\gamma G_{t+1}|S_t=s]
+V_{π}(s)&=\mathbb{E} _ {π}[G _ t|S _ t=s] \\
+& = \mathbb{E} _ {π}[R_{t+1}+\gamma R _ {t+2}+\gamma^2 R _ {t+3}…|S_t=s] \\
+& = \mathbb{E} _ {π}[R_{t+1}+\gamma (R_{t+2}+\gamma R_{t+3}…)|S_t=s] \\
+& = \mathbb{E} _ {π}[R_{t+1}+\gamma G_{t+1}|S_t=s]
 \end{aligned} \tag{2}
 $$
 
@@ -45,7 +45,7 @@ $$
 
 $$
 \begin{aligned} 
-&\mathbb{E}{_\pi }[{R_{t + 1}}|{S_t} = s] \\
+&\mathbb{E} _ {\pi }[{R_{t + 1}}|{S_t} = s] \\
 & = \sum\limits_r {r \cdot p(r|s)} \\
 & = \sum\limits_r {r\sum\limits_a {p(r,a|s)} } \\
 & = \sum\limits_r {\sum\limits_a {r \cdot p(r,a|s)} } \\
@@ -54,24 +54,26 @@ $$
 & = \sum\limits_a {\sum\limits_r {r \cdot \pi (a|s)p(r|s,a)} } \\
 & = \sum\limits_a {\pi (a|s)\sum\limits_r {r \cdot p(r|s,a)} } \\
 & = \sum\limits_a {\pi (a|s)\sum\limits_r {r\sum\limits_{s'} {p(s',r|s,a)} } } \\
-& = \sum\limits_a {\pi (a|s)\sum\limits_r {\sum\limits_{s'} {p(s',r|s,a)} } } r \end{aligned} \tag{3}
+& = \sum\limits_a {\pi (a|s)\sum\limits_r {\sum\limits_{s'} {p(s',r|s,a)} } } r 
+\end{aligned} \tag{3}
 $$
 
 以及
 
 $$
 \begin{aligned} 
-&\mathbb{E}{_\pi }[{G_{t + 1}}|{S_t} = s] \\
-= & \sum\limits_{{G_{t + 1}}} {{G_{t + 1}}p({G_{t + 1}}|s)} \\
+&\mathbb{E} _ {\pi }[{G_{t + 1}}|{S_t} = s] \\
+= & \sum \limits_{{G_{t + 1}}} {{G_{t + 1}}p({G_{t + 1}}|s)} \\
 = & \sum\limits_{{G_{t + 1}}} {{G_{t + 1}}\sum\limits_a {\sum\limits_{s'} {p({G_{t + 1}}|s',a)p(s',a|s)} } } \\
 = & \sum\limits_{{G_{t + 1}}} {{G_{t + 1}}\sum\limits_a {\sum\limits_{s'} {p({G_{t + 1}}|s')p(s',a|s)} } } \\ 
 = & \sum\limits_{{G_{t + 1}}} {{G_{t + 1}}\sum\limits_a {\sum\limits_{s'} {p({G_{t + 1}}|s')p(a|s)p(s'|s,a)} } } \\ 
 = & \sum\limits_{{G_{t + 1}}} {{G_{t + 1}}\sum\limits_a {\sum\limits_{s'} {p({G_{t + 1}}|s')\pi (a|s)p(s'|s,a)} } } \\ 
 = & \sum\limits_a {\sum\limits_{s'} {\pi (a|s)p(s'|s,a)\sum\limits_{{G_{t + 1}}} {{G_{t + 1}}p({G_{t + 1}}|s')} } } \\ 
-= & \sum\limits_a {\sum\limits_{s'} {\pi (a|s)p(s'|s,a)} } {\mathbb{E}_\pi }[{G_{t + 1}}|{S_{t + 1}} = s']\\ 
-= & \sum\limits_a {\sum\limits_{s'} {\pi (a|s)p(s'|s,a)} } {v_\pi }(s')\\ 
-= & \sum\limits_a {\pi (a|s)\sum\limits_{s'} {p(s'|s,a)} } {v_\pi }(s')\\ 
-= & \sum\limits_a {\pi (a|s)\sum\limits_r {\sum\limits_{s'} {p(s',r|s,a)} } } {v_\pi }(s') \end{aligned} \tag{4}
+= & \sum\limits_a {\sum\limits_{s'} {\pi (a|s)p(s'|s,a)} } {\mathbb{E} _ \pi }[{G_{t + 1}}|{S_{t + 1}} = s'] \\ 
+= & \sum\limits_a {\sum\limits_{s'} {\pi (a|s)p(s'|s,a)} } {V_\pi }(s') \\ 
+= & \sum\limits_a {\pi (a|s)\sum\limits_{s'} {p(s'|s,a)} } {V_\pi }(s') \\ 
+= & \sum\limits_a {\pi (a|s)\sum\limits_r {\sum\limits_{s'} {p(s',r|s,a)} } } {V_\pi }(s') 
+\end{aligned} \tag{4}
 $$
 
 其中第三个等式由于动作 $a$是状态 $s$转移到状态 $s'$的动作，而 $G_{t+1}$只会受到状态 $s'$以及其之后状态的动作的影响，故动作 $a$不影响 $G_{t+1}$，认为两者独立，而独立事件即有 $P(A|B) = P(A)$。
@@ -80,7 +82,7 @@ $$
 
 $$
 \begin{aligned}
-Q_{\pi}(s, a) &=\sum_{s^{\prime}, r} p\left(s^{\prime}, r \mid s, a\right)\left[r+\gamma v_{\pi}\left(s^{\prime}\right)\right]
+Q_{\pi}(s, a) &=\sum_{s^{\prime}, r} p\left(s^{\prime}, r \mid s, a\right)\left[r+\gamma V_{\pi}\left(s^{\prime}\right)\right]
 \end{aligned} \tag{5}
 $$
 
@@ -89,10 +91,10 @@ $$
 $$
 \begin{aligned}
 V_{\pi}(s) 
-& = \mathbb{E}_{\pi}\left[G_{t} \mid S_{t}=s\right] \\
-& = \mathbb{E}_{\pi}\left[R_{t+1}+\gamma G_{t+1} \mid S_{t}=s\right] \\
+& = \mathbb{E} _ {\pi}\left[G_{t} \mid S_{t}=s\right] \\
+& = \mathbb{E} _ {\pi}\left[R_{t+1}+\gamma G_{t+1} \mid S_{t}=s\right] \\
 & = \sum_{a} \pi(a \mid s) \sum_{s^{\prime}} \sum_{r} p\left(s^{\prime}, r \mid s, a\right)\left[r+\gamma \mathbb{E}\left[G_{t+1} \mid S_{t+1}=s^{\prime}\right]\right]\\
-& = \sum_{a} \pi(a \mid s) \sum_{s^{\prime}, r} p\left(s^{\prime}, r \mid s, a\right)\left[r+\gamma v_{\pi}\left(s^{\prime}\right)\right] \\
+& = \sum_{a} \pi(a \mid s) \sum_{s^{\prime}, r} p\left(s^{\prime}, r \mid s, a\right)\left[r+\gamma V_{\pi}\left(s^{\prime}\right)\right] \\
 & = \sum_{a} \pi(a \mid s)Q_{\pi}(s, a)
 \end{aligned} \tag{6}
 $$
@@ -119,7 +121,7 @@ $$
 
 $$
 \begin{aligned}
-Q^{*}_{\pi}(s, a) =r+\gamma \max Q_{\pi}(s', a')
+Q^{*} _ {\pi}(s, a) =r+ \gamma \max Q _ {\pi}(s', a')
 \end{aligned} \tag{9}
 $$
 
