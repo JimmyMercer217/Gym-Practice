@@ -10,6 +10,7 @@ OpenAi-Gym环境熟悉与RL学习练习
 | FlappyBird  |  |         DQN |  ✔ |
 | CartPole    |  |  Double-DQN |  ✔ |
 | CartPole    |  |         DQN |  ✔ |
+| CartPole    |  | policy gradient |  ✔ |
 | LunarLander | default |  Double-DQN |  ✔ |
 | LunarLander | default | D3QN | ✔ |
 
