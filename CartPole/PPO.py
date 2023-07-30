@@ -98,6 +98,9 @@ class ActorCritic(nn.Module):
         state_value = self.value_layer(state)
         return action_logprobs, torch.squeeze(state_value), dist_entropy
 
+    def cal_detach_state_value(self, state):
+        return self.value_layer(state).detach()
+
 
 class PPO:
     def __init__(self, state_dim, action_dim, hidden_dim, lr, gamma, K_epochs, mini_batch_size, eps_clip, gae_lambda,
@@ -109,8 +112,6 @@ class PPO:
         self.policy = ActorCritic(state_dim, action_dim, hidden_dim).to(device)
         # Trick 9—Adam Optimizer Epsilon Parameter
         self.optimizer = torch.optim.Adam(self.policy.parameters(), lr=lr)
-        self.policy_old = ActorCritic(state_dim, action_dim, hidden_dim).to(device)
-        self.policy_old.load_state_dict(self.policy.state_dict())
         self.MseLoss = nn.MSELoss()
         self.losses = []
         self.eps = np.finfo(np.float32).eps.item()
@@ -119,9 +120,11 @@ class PPO:
         # 用作缓冲区
         self.memory = Memory(mini_batch_size)
 
-    def update_policy(self):
+    # Next_state only used for calculate the last advantage. When final state is not terminal, next_state is not None.
+    def update_policy(self, next_state):
         # Monte Carlo estimate of state rewards:
         rewards = []
+        next_state_value = None
         if not self.use_gae:
             discounted_reward = 0
             for reward, is_terminal in zip(reversed(self.memory.rewards), reversed(self.memory.is_terminals)):
@@ -140,10 +143,12 @@ class PPO:
         old_logprobs = torch.stack(self.memory.logprobs).to(device).detach()
         old_is_terminal = self.memory.is_terminals
         # Optimize policy for K epochs:
-        # todo try mini batch, replace two network to one and optimize gae calculation
+        # todo try 1.mini batch
         for _ in range(self.K_epochs):
             # Evaluating old actions and values :
             logprobs, state_values, dist_entropy = self.policy.evaluate(old_states, old_actions)
+            if next_state is not None and self.use_gae:
+                next_state_value = self.policy.cal_detach_state_value(torch.stack([next_state]).to(device).detach())
             # Finding the ratio (pi_theta / pi_theta__old):
             ratios = torch.exp(logprobs - old_logprobs.detach())
             # Finding Surrogate Loss:
@@ -154,15 +159,14 @@ class PPO:
             else:
                 # gae
                 advantages = np.zeros(len(rewards), dtype=np.float32)
-                for t in range(len(rewards) - 1):
-                    discount = 1
-                    a_t = 0
-                    for k in range(t, len(rewards) - 1):
-                        a_t += discount * (
-                                rewards[k] + self.gamma * state_values.detach()[k + 1] * (1 - old_is_terminal[k]) -
-                                state_values.detach()[k])
-                        discount *= self.gamma * self.gae_lambda
-                    advantages[t] = a_t
+                advantages[len(rewards) - 1] = rewards[len(rewards) - 1] - state_values.detach()[len(rewards) - 1]
+                if next_state is not None:
+                    advantages[len(rewards) - 1] = self.gamma * next_state_value
+                for i in reversed(range(len(rewards) - 1)):
+                    a_t = rewards[i] + self.gamma * state_values.detach()[i + 1] * (1 - old_is_terminal[i]) - \
+                           state_values.detach()[i] + self.gamma * self.gae_lambda * advantages[i+1] * (1 - old_is_terminal[i])
+                    advantages[i] = a_t
+
                 advantages = torch.tensor(advantages).to(device)
                 # Trick 1—Advantage Normalization
                 advantages = (advantages - advantages.mean()) / (advantages.std() + self.eps)
@@ -180,8 +184,6 @@ class PPO:
             # Trick 7—Gradient clip
             torch.nn.utils.clip_grad_norm_(self.policy.parameters(), 0.5)
             self.optimizer.step()
-        # Copy new weights into old policy:
-        self.policy_old.load_state_dict(self.policy.state_dict())
 
     def train_network(self, epsiodes=500):
         epsiode_rewards = []
@@ -191,7 +193,7 @@ class PPO:
             ep_reward = 0
             while True:
                 # Running policy_old:
-                state, action, log_prob = self.policy_old.select_action(state)
+                state, action, log_prob = self.policy.select_action(state)
                 self.memory.logprobs.append(log_prob)
                 self.memory.states.append(state)
                 self.memory.actions.append(action)
@@ -203,7 +205,8 @@ class PPO:
                 self.memory.is_terminals.append(1.0 if done else 0)
                 ep_reward += reward
                 if done:
-                    self.update_policy()
+                    # torch.from_numpy(state).float().to(device)
+                    self.update_policy(None)
                     self.memory.clear_memory()
                     break
             # logging
@@ -237,6 +240,6 @@ if __name__ == '__main__':
     K_epochs = 4  # update policy for K epochs
     eps_clip = 0.2  # clip parameter for PPO
     ppo = PPO(state_dim, action_dim, hidden_dim, lr, gamma, K_epochs, mini_batch_size, eps_clip, gae_lambda,
-              use_gae=False)
+              use_gae=True)
     epsiode_rewards, mean_rewards = ppo.train_network(epsiodes=500)
-    draw_pic(range(len(epsiode_rewards)), epsiode_rewards, "iteration-sumReward-no-gae")
+    draw_pic(range(len(epsiode_rewards)), epsiode_rewards, "iteration-sumReward-gae-optimized")
